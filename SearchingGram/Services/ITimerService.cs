@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Services
 {
-     public interface IInstaService : INetService
+    public interface ITimerService
     {
-        InstaResponseUserInfo GetInfo(string name);
+        public bool LastTimeRefresh();
     }
+        
 }

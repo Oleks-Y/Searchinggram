@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SearchingGram.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,25 @@ namespace SearchingGram.Services
     {
         public string URL { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public string GetInfo(string name)
+        public string url = "http://127.0.0.1:4555/tiktokparse/tasks";
+
+        public TikTokResponseUserInfo GetInfo(string name)
         {
-            throw new NotImplementedException();
+            HttpClient client = new HttpClient();
+            string resAsString;
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(url + $"?name={name}").Result;
+                resAsString = response.Content.ReadAsStringAsync().Result;
+            }
+            catch
+            {
+                throw new Exception("Trouble with TikTokParse!");
+            }
+            //TODO Try Catch 
+            var deserialized = JsonConvert.DeserializeObject<TikTokResponseUserInfo>(resAsString);
+
+            return deserialized;
         }
 
         public bool IsUserExist(string name)
@@ -22,7 +39,7 @@ namespace SearchingGram.Services
             string resAsString;
             try
             {
-                HttpResponseMessage response = client.GetAsync($"http://127.0.0.1:4555/tiktokparse/tasks?name={name}").Result;
+                HttpResponseMessage response = client.GetAsync(url + $"?name={name}").Result;
                 resAsString = response.Content.ReadAsStringAsync().Result;
             }
             catch

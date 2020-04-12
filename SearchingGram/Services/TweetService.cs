@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SearchingGram.Responses;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,9 +20,12 @@ namespace SearchingGram.Services
             _service=new TwitterService("SyFjRNtGIXiHLS3k9hUWdFZbv", "XmeczmCV07Kde8n41BbIytzc3eIbSDdFGfRNf0mXou716dsHJN", "1153209111942762502-iqMo6JAksO2LjD3cYSFxDSMVsy9bnI", "rp8RZcvlTW4etlWDW1ALig3pLY7TBtGAlXTaqn8BFBKJE");
         }
 
-        public string GetInfo(string name)
+        public TikTokResponseUserInfo GetInfo(string name)
         {
-            throw new NotImplementedException();
+           var finded= _service.SearchForUser(new SearchForUserOptions { Q = name });
+           var deserialized = JsonConvert.DeserializeObject<TikTokResponseUserInfo>(finded.ToJson());
+           return deserialized;
+            
         }
 
         public bool IsUserExist(string name)

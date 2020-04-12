@@ -9,17 +9,37 @@ namespace SearchingGram.Services
 {
     public class InstaService : IInstaService
     {
-        
 
-        string INetService.URL { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public string GetInfo(string name)
+        string INetService.URL { get=>  url; set { } }
+
+        private string url = "http://127.0.0.1:5000/instaparse/tasks";
+
+        public InstaResponseUserInfo  GetInfo(string name)
         {
-            throw new NotImplementedException();
+            HttpClient client = new HttpClient();
+            string resAsString;
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(url +$"?name={name}").Result;
+                resAsString = response.Content.ReadAsStringAsync().Result;
+            }
+            catch
+            {
+                throw new Exception("Trouble with Instaparse!");
+            }
+            //TODO Try Catch 
+            var deserialized = JsonConvert.DeserializeObject<InstaResponseUserInfo>(resAsString);
+
+            return deserialized;
+
+
         }
 
-        public bool IsUserExist(string name)
-        {
+
+
+            public bool IsUserExist(string name)
+            {
             HttpClient client = new HttpClient();
             string resAsString;
             try

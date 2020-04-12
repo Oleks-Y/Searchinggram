@@ -149,3 +149,4 @@ C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\T
 C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Tweetinvi.dll
 C:\Users\User\source\repos\SearchingGram\SearchingGram\obj\Debug\netcoreapp3.1\SearchingGram.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\User\source\repos\SearchingGram\SearchingGram\obj\Debug\netcoreapp3.1\SearchingGram.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\TimeInfo.json

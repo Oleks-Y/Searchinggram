@@ -21,15 +21,19 @@ namespace SearchingGram.Controllers
         public readonly IInstaService _instaService;
         public readonly ITwitterService _twitterService;
         public readonly ITikTokService _tikTokService;
-
-        public ValuesController(DataDbContext db, WatcherDbContext wdb,IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService)
+        private ITimerService _timer;
+        public ValuesController(DataDbContext db, WatcherDbContext wdb,IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer)
         {
             _Db = db;
             _WDb = wdb;
             _instaService = instaService;
             _twitterService = twitterService;
             _tikTokService = tikTokService;
+            _timer = timer;
         }
+        [HttpGet]
+        [Route("/[controller]/test")]
+        public IActionResult Test() => Json(_timer.LastTimeRefresh());
 
         [HttpGet]
         [Route("/[controller]/getbyid")]

@@ -41,12 +41,15 @@ namespace SearchingGram
             services.AddScoped<ITwitterService, TweetService>();
             services.AddScoped<ITikTokService, TikTokService>();
             services.AddScoped<IInstaService, InstaService>();
+            services.AddScoped<ITimerService, TimerService>();
+
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ITimerService timer)
         {
             if (env.IsDevelopment())
             {
@@ -59,6 +62,7 @@ namespace SearchingGram
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

@@ -7,9 +7,9 @@ namespace SearchingGram.Services
 {
     public interface INetService
     {
-         string URL { get; set; }
+         public string URL { get; set; }
 
-        string GetInfo(string name);
+        
 
 
         bool IsUserExist(string name);

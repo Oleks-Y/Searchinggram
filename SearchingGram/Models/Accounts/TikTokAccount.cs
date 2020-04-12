@@ -8,6 +8,8 @@ namespace SearchingGram.Models.Accounts
 {
     public class TikTokAccount : Account
     {
-        
+        public List<int> FollowersGrows { get; set; }
+
+        public List<int> LikesGrows { get; set; }
     }
 }
