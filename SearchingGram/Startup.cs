@@ -42,6 +42,7 @@ namespace SearchingGram
             services.AddScoped<ITikTokService, TikTokService>();
             services.AddScoped<IInstaService, InstaService>();
             services.AddScoped<ITimerService, TimerService>();
+            services.AddScoped<IRefreshInfoService, RefreshInfoService>();
 
             
             services.AddControllersWithViews();
@@ -49,8 +50,9 @@ namespace SearchingGram
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ITimerService timer)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ITimerService timer, IRefreshInfoService refreshInfo)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -72,7 +74,9 @@ namespace SearchingGram
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
+
             {
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

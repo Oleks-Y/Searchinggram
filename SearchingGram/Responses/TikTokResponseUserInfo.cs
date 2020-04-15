@@ -7,10 +7,10 @@ namespace SearchingGram.Responses
 {
     public class TikTokResponseUserInfo
     {
-        public int Followers { get; set; }
-        public int Following { get; set;}
-        public bool Is_True { get; set; }
-        public int Likes { get; set; }
+        public string Followers { get; set; }
+        public string Following { get; set;}
+        public bool Is_Error { get; set; }
+        public string Likes { get; set; }
         public string Name { get; set; }
 
 

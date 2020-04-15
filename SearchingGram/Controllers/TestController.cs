@@ -15,11 +15,13 @@ namespace SearchingGram.Controllers
         public readonly IInstaService _instaService;
         public readonly ITwitterService _twitterService;
         public readonly ITikTokService _tikTokService;
-        public TestController(IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer)
+        public readonly IRefreshInfoService _refreshInfo;
+        public TestController(IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer, IRefreshInfoService refreshInfo)
         {
             _instaService = instaService;
             _twitterService = twitterService;
             _tikTokService = tikTokService;
+            _refreshInfo = refreshInfo;
         }
         [HttpGet]
         [Route("/[controller]/testInsta")]
@@ -45,5 +47,15 @@ namespace SearchingGram.Controllers
 
 
         }
+        [HttpGet]
+        [Route("/[controller]/testRefresh")]
+        public IActionResult Test3(string name)
+        {
+            _refreshInfo.RefreshAccountsInfo();
+            return Ok("Done");
+
+
+        }
+
     }
 }
