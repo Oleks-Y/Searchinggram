@@ -7,6 +7,7 @@ namespace SearchingGram
 {
     public class InstaResponseUserInfo
     {
+        public string Pic { get; set; }
         public string Biography { get; set; }
         public string Business_category_name { get; set; }
         public int Comments { get; set; }        

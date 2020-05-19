@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SearchingGram.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Models.Accounts
 {
-    public class TikTokAccount : Account
+    public class TikTokAccount : Account, ITikTokResponse
     {
         public string _growsLikes { get; set; }       
 
         public string _growsFollowers { get; set; }
 
         [NotMapped]
-        public Dictionary<int, string> GrowsLikes
+        public Dictionary<string, string> GrowsLikes
         {
             get
             {
-                return JsonConvert.DeserializeObject<Dictionary<int, string>>
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>
                   (string.IsNullOrEmpty(_growsLikes) ? "{}" : _growsLikes);
             }
             set
@@ -29,11 +30,11 @@ namespace SearchingGram.Models.Accounts
         }       
 
         [NotMapped]
-        public Dictionary<int, string> GrowsFollowers
+        public Dictionary<string, string> GrowsFollowers
         {
             get
             {
-                return JsonConvert.DeserializeObject<Dictionary<int, string>>
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>
                   (string.IsNullOrEmpty(_growsFollowers) ? "{}" : _growsFollowers);
             }
             set

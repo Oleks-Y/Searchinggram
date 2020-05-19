@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TweetSharp;
 
 namespace SearchingGram.Services
 {
     public interface ITwitterService : INetService
     {
-        public TikTokResponseUserInfo GetInfo(string name);
+        public TweeterResponseUserInfo GetInfo(string name);
     }
 }

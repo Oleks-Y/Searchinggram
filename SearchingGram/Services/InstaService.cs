@@ -54,6 +54,7 @@ namespace SearchingGram.Services
 
             var deserialized = JsonConvert.DeserializeObject<Dictionary<string,string>>(resAsString);
             if (deserialized.Keys.Contains("error_name")) return false;
+            if (deserialized["Is_error"].ToLower() == "true") return false;
             return true;
 
 

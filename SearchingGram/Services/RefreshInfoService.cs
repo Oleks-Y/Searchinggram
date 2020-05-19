@@ -20,7 +20,7 @@ namespace SearchingGram.Services
             _tikTokService = tikTokService;
         }
 
-        public void RefreshAccountsInfo()
+        public async Task RefreshAccountsInfo()
         {
             foreach(var a in _WDb.Watchers)
             {
@@ -38,47 +38,51 @@ namespace SearchingGram.Services
                                 var res = _instaService.GetInfo(c.Name);
 
                                 var currentInfoLikesDict = c.GrowsLikes;
-                                currentInfoLikesDict[currentInfoLikesDict.Keys.Count+1] = res.Likes;
+                                currentInfoLikesDict[DateTime.Now.ToString()] = res.Likes;
                                 _WDb.InstaAccounts.FirstOrDefault(x => x.Id == c.Id).GrowsLikes = currentInfoLikesDict;
                                 //_WDb.SaveChanges();
 
                                 var currentInfoCommentsDict = c.GrowsComments;
-                                currentInfoCommentsDict[currentInfoCommentsDict.Keys.Count+1] = res.Comments;
+                                currentInfoCommentsDict[DateTime.Now.ToString()] = res.Comments;
                                 _WDb.InstaAccounts.FirstOrDefault(x => x.Id == c.Id).GrowsComments = currentInfoCommentsDict;
                                 //_WDb.SaveChanges();
 
                                 var currentInfoFollowersDict = c.GrowsFollowers;
-                                currentInfoFollowersDict[currentInfoFollowersDict.Keys.Count+1] = res.Followers;
+                                currentInfoFollowersDict[DateTime.Now.ToString()] = res.Followers;
                                 _WDb.InstaAccounts.FirstOrDefault(x => x.Id == c.Id).GrowsFollowers = currentInfoFollowersDict;
+
+                                var currentUserPic = res.Pic;
+                                _WDb.InstaAccounts.FirstOrDefault(x => x.Id == c.Id).Pic = currentUserPic;
+
                                 
                             }
 
                         }
                     }
 
-                    foreach (var d in _WDb.TikTokAccounts)
+                   
+
+                    foreach (var e in _WDb.TwitterAccounts)
                     {
-                        if (d.MonitorOwnerId == b.Id)
+                        if (e.MonitorOwnerId == b.Id)
                         {
-                            var res = _tikTokService.GetInfo(d.Name);
+                            var res = _twitterService.GetInfo(e.Name);
 
-                            var currentInfoLikesDict = d.GrowsLikes;
-                            currentInfoLikesDict[currentInfoLikesDict.Keys.Count + 1] = res.Likes;
-                            _WDb.TikTokAccounts.FirstOrDefault(x => x.Id == d.Id).GrowsLikes = currentInfoLikesDict;
+                            var currentInfoFollowersDict = e.GrowsFollowers;
+                            currentInfoFollowersDict[DateTime.Now.ToString()] = res.FollowerCount;
+                            _WDb.TwitterAccounts.FirstOrDefault(x => x.Id == e.Id).GrowsFollowers = currentInfoFollowersDict; 
+                            
+                            var CurrentRetweetsDict = e.GrowsRetweets;
+                            CurrentRetweetsDict[DateTime.Now.ToString()] = res.RetweetsCount;
+                            _WDb.TwitterAccounts.FirstOrDefault(x => x.Id == e.Id).GrowsRetweets= CurrentRetweetsDict;
 
-                            var currentInfoFollowersDict = d.GrowsFollowers;
-                            currentInfoFollowersDict[currentInfoFollowersDict.Keys.Count + 1] = res.Followers;
-                            _WDb.TikTokAccounts.FirstOrDefault(x => x.Id == d.Id).GrowsFollowers = currentInfoFollowersDict;
+                            var currentUserPic = res.Pic;
+                            _WDb.TwitterAccounts.FirstOrDefault(x => x.Id == e.Id).Pic = currentUserPic;
                         }
                     }
-
-                    //foreach (var c in b.TwitterAccounts)
-                    //{
-                        
-                    //}
                 }
             }
-            _WDb.SaveChanges();
+            await _WDb.SaveChangesAsync();
         }
     }
 }

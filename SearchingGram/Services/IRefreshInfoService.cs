@@ -7,7 +7,7 @@ namespace SearchingGram.Services
 {
     public interface IRefreshInfoService
     {
-        public void RefreshAccountsInfo();
+        public Task RefreshAccountsInfo();
         
     }
 }

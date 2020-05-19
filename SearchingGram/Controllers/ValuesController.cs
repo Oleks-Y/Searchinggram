@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SearchingGram.Controllers.Responses;
 using SearchingGram.Data;
 using SearchingGram.Models;
 using SearchingGram.Models.Accounts;
+using SearchingGram.Models.Responses;
 using SearchingGram.Services;
 using Tweetinvi.Core.Extensions;
 
@@ -31,6 +33,7 @@ namespace SearchingGram.Controllers
             _tikTokService = tikTokService;
             _timer = timer;
         }
+        
         [HttpGet]
         [Route("/[controller]/test")]
         public IActionResult Test() => Json(_timer.LastTimeRefresh());
@@ -52,7 +55,7 @@ namespace SearchingGram.Controllers
         public IActionResult AddMonitor(string token,string monitorName)
         {
             var User = checkToken(token);
-            if (User == null) return NotFound("No user with this token!Please create token! ");
+            if (User == null) return Json("None");
             
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             if (watcher == null)
@@ -61,9 +64,13 @@ namespace SearchingGram.Controllers
                 _WDb.SaveChanges();
                 watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             }
+            if(_WDb.Monitors.FirstOrDefault(x => x.Name == monitorName) != null)
+            {
+                return Json(false);
+            }
             _WDb.Monitors.Add(new Monitor { Name = monitorName, Watcher = watcher });
             _WDb.SaveChanges();
-            return Ok("Done!");
+            return Ok(true);
 
 
         }
@@ -72,10 +79,10 @@ namespace SearchingGram.Controllers
         public IActionResult AddAccount(string token, string monitorName, string accountName, string accountType)        
         {
             var User = checkToken(token);
-            if (User == null) return NotFound("No user with this token!Please create token! ");
+            if (User == null) return Json("No user ");
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name==monitorName);
-            if (monitor == null) return NotFound("No such file!");
+            if (monitor == null) return Json("No monitor");
             
             switch (accountType)
             {
@@ -114,11 +121,57 @@ namespace SearchingGram.Controllers
                                                                        { "Twitter", new List<string>()}};
 
 
-             _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x=>resposeDict["Instagram"].Add(x.Name)); 
+            _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x=>resposeDict["Instagram"].Add(x.Name)); 
             _WDb.TikTokAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["TikTok"].Add(x.Name));
             _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["Twitter"].Add(x.Name));
             return Json(resposeDict);
         }
+        [HttpGet]
+        [Route("/Values/get_accs_Info")]
+        public IActionResult GetAccsInfo(string token, string monitorName)
+        {
+            var User = checkToken(token);
+            if (User == null) return NotFound("No user with this token!Please create token! ");
+            var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
+            if (monitor == null) return NotFound("No such file!");
+
+
+            var response = new AccountsInfoResponse
+            {
+                Instagram = new List<IInstaResponse>(),
+                
+                Twitter = new List<ITwitterResponse>()
+            };
+            _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Instagram.Add((IInstaResponse)x));
+            
+            _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Twitter.Add((ITwitterResponse)x));
+           
+
+
+            return Json(response);
+        }
+        [HttpGet]
+        [Route("/[controller]/get_monitors")]
+        public IActionResult GetStatistics(string token)
+        {
+            var User = checkToken(token);
+            if (User == null) return NotFound("No user with this token!Please create token! ");
+            var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            IEnumerable<string> monitor = _WDb.Monitors.Where(x => x.WatcherId == watcher.Id).Select(x=>x.Name);
+            
+            
+
+            var resposeDict = new Dictionary<string, List<string>>() { { "User", new List<string>(){ watcher.Name } },
+                                                                       { "Monitors", monitor.ToList()} };
+
+                                                                      
+
+
+           
+            return Json(resposeDict);
+        }
+
 
         private User checkToken(string token)
         {

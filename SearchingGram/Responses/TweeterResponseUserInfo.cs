@@ -7,9 +7,12 @@ namespace SearchingGram.Responses
 {
     public class TweeterResponseUserInfo
     {
+        public string Pic { get; set; }
         public string ScreenName { get; set; }
 
         public int FollowerCount { get; set; }
+
+        public int RetweetsCount { get; set; }
 
 
     }

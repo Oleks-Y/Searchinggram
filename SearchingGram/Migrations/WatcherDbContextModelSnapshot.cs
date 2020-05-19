@@ -31,6 +31,9 @@ namespace SearchingGram.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Pic")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("_growsComments")
                         .HasColumnType("nvarchar(max)");
 
@@ -84,6 +87,15 @@ namespace SearchingGram.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_growsFollowers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_growsRetweets")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
