@@ -23,7 +23,7 @@ namespace SearchingGram.Quartz
                 .WithIdentity("MailingTrigger", "default")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                .WithIntervalInMinutes(30)
+                .WithIntervalInMinutes(2)
                 .RepeatForever())
                 .Build();
 

@@ -52,7 +52,7 @@ namespace SearchingGram.Controllers
 
         [HttpPost]
         [Route("/[controller]/addmonitor")]
-        public IActionResult AddMonitor(string token,string monitorName)
+        public async Task<IActionResult> AddMonitor(string token,string monitorName)
         {
             var User = checkToken(token);
             if (User == null) return Json("None");
@@ -61,7 +61,7 @@ namespace SearchingGram.Controllers
             if (watcher == null)
             {
                 _WDb.Watchers.Add(new Watcher { Name = User.Login });
-                _WDb.SaveChanges();
+                await _WDb.SaveChangesAsync();
                 watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             }
             if(_WDb.Monitors.FirstOrDefault(x => x.Name == monitorName) != null)
@@ -69,14 +69,14 @@ namespace SearchingGram.Controllers
                 return Json(false);
             }
             _WDb.Monitors.Add(new Monitor { Name = monitorName, Watcher = watcher });
-            _WDb.SaveChanges();
+            await _WDb.SaveChangesAsync();
             return Ok(true);
 
 
         }
         [HttpPost]
         [Route("/[controller]/addaccount")]
-        public IActionResult AddAccount(string token, string monitorName, string accountName, string accountType)        
+        public async Task<IActionResult> AddAccount(string token, string monitorName, string accountName, string accountType)        
         {
             var User = checkToken(token);
             if (User == null) return Json("No user ");
@@ -88,20 +88,20 @@ namespace SearchingGram.Controllers
             {
                 case "Twitter":
                      if (!_twitterService.IsUserExist(accountName)) return NotFound("No account found");
-                    _WDb.TwitterAccounts.Add(new TwitterAccount { Name = accountName, MonitorOwner = monitor });
+                    await _WDb.TwitterAccounts.AddAsync(new TwitterAccount { Name = accountName, MonitorOwner = monitor });
                     break;
                 case "Instagram":
                     if (!_instaService.IsUserExist(accountName)) return NotFound("No account found");
-                    _WDb.InstaAccounts.Add(new InstaAccount { Name = accountName, MonitorOwner = monitor });
+                    await _WDb.InstaAccounts.AddAsync(new InstaAccount { Name = accountName, MonitorOwner = monitor });
                     break;
                 case "TikTok":
                     if (!_tikTokService.IsUserExist(accountName)) return NotFound("No account found");
-                    _WDb.TikTokAccounts.Add(new TikTokAccount{ Name = accountName, MonitorOwner = monitor });
+                    await _WDb.TikTokAccounts.AddAsync(new TikTokAccount{ Name = accountName, MonitorOwner = monitor });
                     break;
                 default:
                     return NotFound("We don`t support this social network");
             }
-            _WDb.SaveChanges();
+           await  _WDb.SaveChangesAsync();
             return Ok("Added");
 
         }
@@ -152,6 +152,39 @@ namespace SearchingGram.Controllers
             return Json(response);
         }
         [HttpGet]
+        [Route("/Values/get_account_Info")]
+        public IActionResult GetAccountInfo(string token, string monitorName, string accountName, string accountType)
+        {
+            var User = checkToken(token);
+            if (User == null) return NotFound("No user with this token!Please create token! ");
+            var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
+            if (monitor == null) return NotFound("No such file!");
+
+
+            switch (accountType)
+            {
+                case "Twitter":
+                    var response = new List<ITwitterResponse>();
+                    response.Add((ITwitterResponse)_WDb.TwitterAccounts.FirstOrDefault(x => x.Name == accountName));
+                   return Json(response);
+                    
+                case "Instagram":
+                    var response1 = new List<IInstaResponse>();
+                    response1.Add((IInstaResponse)_WDb.InstaAccounts.FirstOrDefault(x => x.Name == accountName));
+
+                   return Json(response1);
+                   
+
+                default:
+                    return NotFound("No account");
+            }
+            
+
+
+            return NotFound("No account");
+        }
+        [HttpGet]
         [Route("/[controller]/get_monitors")]
         public IActionResult GetStatistics(string token)
         {
@@ -159,17 +192,52 @@ namespace SearchingGram.Controllers
             if (User == null) return NotFound("No user with this token!Please create token! ");
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             IEnumerable<string> monitor = _WDb.Monitors.Where(x => x.WatcherId == watcher.Id).Select(x=>x.Name);
-            
-            
 
-            var resposeDict = new Dictionary<string, List<string>>() { { "User", new List<string>(){ watcher.Name } },
+            Dictionary<string,List<string>> resposeDict;
+            try
+            {
+                 resposeDict = new Dictionary<string, List<string>>() { { "User", new List<string>(){ watcher.Name } },
                                                                        { "Monitors", monitor.ToList()} };
+            }
+            catch
+            {
+                return NotFound();
+            }
 
                                                                       
 
 
            
             return Json(resposeDict);
+        }
+        [HttpDelete]
+        [Route("/[controller]/delete_account")]
+        public async Task<IActionResult> DeleteAccount(string token, string monitorName, string accountName, string accountType)
+        {
+            var User = checkToken(token);
+            if (User == null) return NotFound("No user with this token!Please create token! ");
+            var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
+
+            switch (accountType)
+            {
+                case "Twitter":
+
+                    _WDb.TwitterAccounts.Remove(_WDb.TwitterAccounts.FirstOrDefault(x => x.Name == accountName));
+                    break;
+                case "Instagram":
+
+                    _WDb.InstaAccounts.Remove(_WDb.InstaAccounts.FirstOrDefault(x => x.Name == accountName));
+                    break;
+                
+                default:
+                    return NotFound("No account");
+            }
+            await _WDb.SaveChangesAsync();
+            return Ok("Deleted");
+
+
+
         }
 
 
