@@ -17,5 +17,18 @@ namespace SearchingGram
         public bool Is_business_account { get; set; }
         public int Likes { get; set; }
         public bool Is_error { get; set; }
+
+        public int Max_comments { get; set; }
+        public string Max_comments_pic { get; set; }
+        public int Min_comments { get; set; }
+        public string Min_comments_pic { get; set; }
+        public int Max_likes { get; set; }
+        public string Max_likes_pic { get; set; }
+        public int Min_likes { get; set; }
+        public string Min_likes_pic { get; set; }
+
+        public List<int> LikesList { get; set; }
+
+        public List<int> CommentsList { get; set; }
     }
 }

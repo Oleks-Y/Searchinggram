@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="SearchingGram20200522103221" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Users\\User\\source\\repos\\SearchingGram\\SearchingGram\\obj\\Debug\\netcoreapp3\.1\\PubTmp\\Out\\$" />
+  </parameter>
+  <parameter name="SearchingGram.Data.DataDbContext" description="" value="" tags="dbfullsql">
+    <parameterEntry kind="ProviderPath" scope="dbfullsql" match="^C:\\Users\\User\\source\\repos\\SearchingGram\\SearchingGram\\obj\\Debug\\netcoreapp3\.1\\PubTmp\\EFSQLScripts\\SearchingGram\.Data\.DataDbContext\.sql$" />
+  </parameter>
+  <parameter name="SearchingGram.Data.WatcherDbContext" description="" value="" tags="dbfullsql">
+    <parameterEntry kind="ProviderPath" scope="dbfullsql" match="^C:\\Users\\User\\source\\repos\\SearchingGram\\SearchingGram\\obj\\Debug\\netcoreapp3\.1\\PubTmp\\EFSQLScripts\\SearchingGram\.Data\.WatcherDbContext\.sql$" />
+  </parameter>
+</parameters>

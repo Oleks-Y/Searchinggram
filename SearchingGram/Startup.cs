@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SearchingGram.Models;
+using SearchingGram.Services.Interfaces;
 
 namespace SearchingGram
 {
@@ -48,6 +49,8 @@ namespace SearchingGram
             services.AddScoped<IInstaService, InstaService>();
             services.AddScoped<ITimerService, TimerService>();
             services.AddScoped<IRefreshInfoService, RefreshInfoService>();
+            services.AddScoped<IInitializeInfoService, InitializeInfoService>();
+            services.AddScoped<IYou_TubeService, You_TubeService>();
             services.AddTransient<JobFactory>();
             services.AddScoped<DataJob>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -131,5 +134,7 @@ namespace SearchingGram
                 endpoints.MapRazorPages();
             });
         }
+
+        
     }
 }

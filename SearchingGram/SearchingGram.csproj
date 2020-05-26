@@ -5,8 +5,16 @@
     <UserSecretsId>aspnet-SearchingGram-22C022EE-3ACB-4DEC-90F7-A7FDF37F1997</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200522131608_TryFix1.cs" />
+    <Compile Remove="Data\Migrations\20200522131608_TryFix1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200522132019_Fixing.cs" />
+    <Compile Remove="Data\Migrations\20200522132019_Fixing.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.45.0.1929" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />

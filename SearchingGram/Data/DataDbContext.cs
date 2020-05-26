@@ -15,7 +15,7 @@ namespace SearchingGram.Data
         public DataDbContext(DbContextOptions<DataDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+           
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SearchingGram.Controllers.Responses
     {
         public List<IInstaResponse> Instagram { get; set; }
 
-        
+        public List<IYouTubeResponse> YouTube { get; set; }
 
         public List<ITwitterResponse> Twitter { get; set; }
     }

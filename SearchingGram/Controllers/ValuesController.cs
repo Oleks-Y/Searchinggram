@@ -10,6 +10,7 @@ using SearchingGram.Models;
 using SearchingGram.Models.Accounts;
 using SearchingGram.Models.Responses;
 using SearchingGram.Services;
+using SearchingGram.Services.Interfaces;
 using Tweetinvi.Core.Extensions;
 
 namespace SearchingGram.Controllers
@@ -23,19 +24,24 @@ namespace SearchingGram.Controllers
         public readonly IInstaService _instaService;
         public readonly ITwitterService _twitterService;
         public readonly ITikTokService _tikTokService;
+        public readonly IYou_TubeService _youtubeService;
+        public readonly IInitializeInfoService _initializeInfoService;
         private ITimerService _timer;
-        public ValuesController(DataDbContext db, WatcherDbContext wdb,IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer)
+        public ValuesController(DataDbContext db, WatcherDbContext wdb,IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer, IYou_TubeService youtubeService, IInitializeInfoService initializeInfoService)
         {
             _Db = db;
             _WDb = wdb;
             _instaService = instaService;
             _twitterService = twitterService;
             _tikTokService = tikTokService;
+            _youtubeService = youtubeService;
             _timer = timer;
+            _initializeInfoService = initializeInfoService;
         }
         
         [HttpGet]
         [Route("/[controller]/test")]
+        //тестовий метод 
         public IActionResult Test() => Json(_timer.LastTimeRefresh());
 
         [HttpGet]
@@ -60,6 +66,7 @@ namespace SearchingGram.Controllers
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             if (watcher == null)
             {
+                
                 _WDb.Watchers.Add(new Watcher { Name = User.Login });
                 await _WDb.SaveChangesAsync();
                 watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
@@ -84,20 +91,29 @@ namespace SearchingGram.Controllers
             var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name==monitorName);
             if (monitor == null) return Json("No monitor");
             
-            switch (accountType)
+            switch (accountType.ToLower())
             {
-                case "Twitter":
+                case "twitter":
                      if (!_twitterService.IsUserExist(accountName)) return NotFound("No account found");
                     await _WDb.TwitterAccounts.AddAsync(new TwitterAccount { Name = accountName, MonitorOwner = monitor });
+                    await _initializeInfoService.InitInfoTwitter(accountName);
                     break;
-                case "Instagram":
+                case "instagram":
                     if (!_instaService.IsUserExist(accountName)) return NotFound("No account found");
                     await _WDb.InstaAccounts.AddAsync(new InstaAccount { Name = accountName, MonitorOwner = monitor });
+                    await _initializeInfoService.InitInfoInsta(accountName);
                     break;
-                case "TikTok":
-                    if (!_tikTokService.IsUserExist(accountName)) return NotFound("No account found");
-                    await _WDb.TikTokAccounts.AddAsync(new TikTokAccount{ Name = accountName, MonitorOwner = monitor });
+                case "youtube":
+                    if (!_youtubeService.IsUserExist(accountName)) return NotFound("No account found");
+                    await _WDb.YouTubeAccounts.AddAsync(new YouTubeAccount { Name = accountName, MonitorOwner = monitor });
+                    await _initializeInfoService.InitInfoYouTube(accountName);
                     break;
+                //case "TikTok":
+                //    if (!_tikTokService.IsUserExist(accountName)) return NotFound("No account found");
+                //    await _WDb.TikTokAccounts.AddAsync(new TikTokAccount{ Name = accountName, MonitorOwner = monitor });
+                //    break;
+                
+
                 default:
                     return NotFound("We don`t support this social network");
             }
@@ -117,12 +133,12 @@ namespace SearchingGram.Controllers
 
             var resposeDict = new Dictionary<string, List<string>>() { { "name", new List<string>(){ watcher.Name } },
                                                                        { "Instagram", new List<string>()},
-                                                                       { "TikTok", new List<string>()},
+                                                                       { "YouTube", new List<string>()},
                                                                        { "Twitter", new List<string>()}};
 
 
             _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x=>resposeDict["Instagram"].Add(x.Name)); 
-            _WDb.TikTokAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["TikTok"].Add(x.Name));
+            _WDb.YouTubeAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["YouTube"].Add(x.Name));
             _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["Twitter"].Add(x.Name));
             return Json(resposeDict);
         }
@@ -140,11 +156,11 @@ namespace SearchingGram.Controllers
             var response = new AccountsInfoResponse
             {
                 Instagram = new List<IInstaResponse>(),
-                
+                YouTube = new List<IYouTubeResponse>(),
                 Twitter = new List<ITwitterResponse>()
             };
             _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Instagram.Add((IInstaResponse)x));
-            
+            _WDb.YouTubeAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.YouTube.Add((IYouTubeResponse)x));
             _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Twitter.Add((ITwitterResponse)x));
            
 
@@ -174,6 +190,11 @@ namespace SearchingGram.Controllers
                     response1.Add((IInstaResponse)_WDb.InstaAccounts.FirstOrDefault(x => x.Name == accountName));
 
                    return Json(response1);
+                case "YouTube":
+                    var response2 = new List<IYouTubeResponse>();
+                    response2.Add((IYouTubeResponse)_WDb.YouTubeAccounts.FirstOrDefault(x => x.Name == accountName));
+
+                    return Json(response2);
                    
 
                 default:
@@ -186,11 +207,17 @@ namespace SearchingGram.Controllers
         }
         [HttpGet]
         [Route("/[controller]/get_monitors")]
-        public IActionResult GetStatistics(string token)
+        public async Task<IActionResult> GetStatistics(string token)
         {
             var User = checkToken(token);
             if (User == null) return NotFound("No user with this token!Please create token! ");
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            if (watcher == null)
+            {
+                _WDb.Watchers.Add(new Watcher { Name = User.Login });
+                await _WDb.SaveChangesAsync();
+                watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            }
             IEnumerable<string> monitor = _WDb.Monitors.Where(x => x.WatcherId == watcher.Id).Select(x=>x.Name);
 
             Dictionary<string,List<string>> resposeDict;
@@ -228,6 +255,10 @@ namespace SearchingGram.Controllers
                 case "Instagram":
 
                     _WDb.InstaAccounts.Remove(_WDb.InstaAccounts.FirstOrDefault(x => x.Name == accountName));
+                    break;
+                case "YouTube":
+
+                    _WDb.YouTubeAccounts.Remove(_WDb.YouTubeAccounts.FirstOrDefault(x => x.Name == accountName));
                     break;
                 
                 default:

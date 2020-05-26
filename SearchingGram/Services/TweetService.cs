@@ -38,12 +38,29 @@ namespace SearchingGram.Services
                 ExcludeReplies = true
             });
             int retweetsCount = 0;
+            int maxretweets = 0;
+            int minretweets = 100000000;
+            string MaxText = "";
+            string MinText = "";
+            List<int> retweetsCountsList = new List<int>();
             foreach (var i in response)
             {
                 retweetsCount += i.RetweetCount;
+                if (maxretweets < i.RetweetCount) { maxretweets = i.RetweetCount; MaxText = i.TextDecoded; }
+                if(minretweets> i.RetweetCount) { minretweets = i.RetweetCount; MinText = i.TextDecoded; }
+                retweetsCountsList.Add(i.RetweetCount);
             }
 
-            return new TweeterResponseUserInfo { ScreenName = deserialized.ScreenName, FollowerCount = deserialized.FollowersCount, RetweetsCount = retweetsCount, Pic=deserialized.ProfileImageUrl };
+            return new TweeterResponseUserInfo { ScreenName = deserialized.ScreenName,
+                FollowerCount = deserialized.FollowersCount, 
+                RetweetsCount = retweetsCount, 
+                Pic=deserialized.ProfileImageUrl, 
+                MaxRetweets=maxretweets,
+                MinRetweets = minretweets,
+                MaxRetweets_Text = MaxText,
+                MinRetweets_Text = MinText,
+                RetweetsList = retweetsCountsList
+            };
            
             
         }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SearchingGram.Data;
+using SearchingGram.Models.Accounts;
 using SearchingGram.Services;
 using System;
 using System.Collections.Generic;
@@ -16,18 +18,38 @@ namespace SearchingGram.Controllers
         public readonly ITwitterService _twitterService;
         public readonly ITikTokService _tikTokService;
         public readonly IRefreshInfoService _refreshInfo;
-        public TestController(IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer, IRefreshInfoService refreshInfo)
+        public WatcherDbContext _WDb;
+        public TestController(IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer, IRefreshInfoService refreshInfo, WatcherDbContext WDb)
         {
             _instaService = instaService;
             _twitterService = twitterService;
             _tikTokService = tikTokService;
             _refreshInfo = refreshInfo;
+            _WDb = WDb;
         }
         [HttpGet]
         [Route("/[controller]/testInsta")]
-        public IActionResult Test(string name)
+        public IActionResult Test()
         {
-            return Json(_instaService.GetInfo(name));
+            List<string> res = new List<string>();
+            foreach(var i in _WDb.InstaAccounts)
+            {
+                res.Add(i.Name);
+                res.Add(i.MonitorOwnerId.ToString());
+            }
+            foreach (var i in _WDb.TwitterAccounts)
+            {
+                res.Add(i.Name);
+                res.Add(i.MonitorOwnerId.ToString());
+            }
+            foreach (var i in _WDb.YouTubeAccounts)
+            {
+                res.Add(i.Name);
+                res.Add(i.MonitorOwnerId.ToString());
+            }
+
+
+            return Json(res);
 
             
         }

@@ -13,11 +13,34 @@ namespace SearchingGram.Models.Accounts
     public class InstaAccount : Account, IInstaResponse
     {
         public string Pic { get; set; }
-       public string _growsLikes { get; set; }
+
+        public string Biography { get; set; }
+        public string Business_category_name { get; set; }
+        public int Comments { get; set; }
+        public int Follow { get; set; }
+        public int Followers { get; set; }
+        public string Full_name { get; set; }
+        public bool Is_business_account { get; set; }
+        public int Likes { get; set; }
+        
+
+        public int Max_comments { get; set; }
+        public string Max_comments_pic { get; set; }
+        public int Min_comments { get; set; }
+        public string Min_comments_pic { get; set; }
+        public int Max_likes { get; set; }
+        public string Max_likes_pic { get; set; }
+        public int Min_likes { get; set; }
+        public string Min_likes_pic { get; set; }
+        public string _growsLikes { get; set; }
 
         public string _growsComments { get; set; }
 
         public string _growsFollowers{ get; set; }
+
+        public string _likesList { get; set; }
+
+        public string _commentsList { get; set; }
 
         [NotMapped]
         public Dictionary<string ,int > GrowsLikes
@@ -56,6 +79,27 @@ namespace SearchingGram.Models.Accounts
             {
                 _growsFollowers = JsonConvert.SerializeObject(value, Formatting.Indented);
             }
+        }
+        [NotMapped]
+        public List<int> LikesList {
+            get {
+                if (_likesList == null)
+                {
+                    return new List<int> { 0 };
+                }
+                return _likesList.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList(); }
+            set { _likesList = string.Join(";", value); } 
+        }
+
+        [NotMapped]
+        public List<int> CommentsList {
+            get {
+                if (_commentsList == null)
+                {
+                    return new List<int> { 0 };
+                }
+                return _commentsList.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList(); }
+            set { _commentsList = string.Join(";", value); } 
         }
 
 

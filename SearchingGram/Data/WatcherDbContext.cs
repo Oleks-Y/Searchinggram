@@ -24,6 +24,8 @@ namespace SearchingGram.Data
         public DbSet<TikTokAccount> TikTokAccounts { get; set; }
         public DbSet<TwitterAccount> TwitterAccounts { get; set; }
 
+        public DbSet<YouTubeAccount> YouTubeAccounts { get; set; }
+
 
 
 

@@ -25,6 +25,54 @@ namespace SearchingGram.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Biography")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Business_category_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Comments")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Follow")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Followers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Full_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Is_business_account")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Max_comments")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Max_comments_pic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Max_likes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Max_likes_pic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Min_comments")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Min_comments_pic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Min_likes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Min_likes_pic")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MonitorOwnerId")
                         .HasColumnType("int");
 
@@ -34,6 +82,9 @@ namespace SearchingGram.Migrations
                     b.Property<string>("Pic")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("_commentsList")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("_growsComments")
                         .HasColumnType("nvarchar(max)");
 
@@ -41,6 +92,9 @@ namespace SearchingGram.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("_growsLikes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_likesList")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -83,6 +137,21 @@ namespace SearchingGram.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("FollowerCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxRetweets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaxRetweets_Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MinRetweets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MinRetweets_Text")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MonitorOwnerId")
                         .HasColumnType("int");
 
@@ -92,10 +161,19 @@ namespace SearchingGram.Migrations
                     b.Property<string>("Pic")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RetweetsCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ScreenName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("_growsFollowers")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("_growsRetweets")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_retweetsList")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -103,6 +181,62 @@ namespace SearchingGram.Migrations
                     b.HasIndex("MonitorOwnerId");
 
                     b.ToTable("TwitterAccounts");
+                });
+
+            modelBuilder.Entity("SearchingGram.Models.Accounts.YouTubeAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ChanelId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MonitorOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subscribers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideosCount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Views")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_commentsCounts")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_dislikes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_likes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("_mostDisliked")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("_mostLiked")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("_videoNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_viewsGrows")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("_viewsList")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MonitorOwnerId");
+
+                    b.ToTable("YouTubeAccounts");
                 });
 
             modelBuilder.Entity("SearchingGram.Models.Monitor", b =>
@@ -162,6 +296,15 @@ namespace SearchingGram.Migrations
                 {
                     b.HasOne("SearchingGram.Models.Monitor", "MonitorOwner")
                         .WithMany("TwitterAccounts")
+                        .HasForeignKey("MonitorOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SearchingGram.Models.Accounts.YouTubeAccount", b =>
+                {
+                    b.HasOne("SearchingGram.Models.Monitor", "MonitorOwner")
+                        .WithMany()
                         .HasForeignKey("MonitorOwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

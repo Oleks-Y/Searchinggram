@@ -9,11 +9,11 @@ namespace SearchingGram.Services
 {
     public class InstaService : IInstaService
     {
-
+        //URL IS NOT USING EVERYWHERE !!!!!!!!!!!!!!!
 
         string INetService.URL { get=>  url; set { } }
 
-        private string url = "http://127.0.0.1:5000/instaparse/tasks";
+        private string url = "https://instagramgetapi.herokuapp.com/instaparse/tasks";
 
         public InstaResponseUserInfo  GetInfo(string name)
         {
@@ -44,7 +44,7 @@ namespace SearchingGram.Services
             string resAsString;
             try
             {
-                HttpResponseMessage response = client.GetAsync($"http://127.0.0.1:5000/instaparse/tasks?name={name}").Result;
+                HttpResponseMessage response = client.GetAsync($"https://instagramgetapi.herokuapp.com/instaparse/tasks?name={name}").Result;
                 resAsString = response.Content.ReadAsStringAsync().Result;
             }
             catch
@@ -52,9 +52,9 @@ namespace SearchingGram.Services
                 throw new Exception("Trouble with Instaparse!");
             }
 
-            var deserialized = JsonConvert.DeserializeObject<Dictionary<string,string>>(resAsString);
-            if (deserialized.Keys.Contains("error_name")) return false;
-            if (deserialized["Is_error"].ToLower() == "true") return false;
+            var deserialized = JsonConvert.DeserializeObject<InstaResponseUserInfo>(resAsString);
+            
+            if (deserialized.Is_error == true) return false;
             return true;
 
 

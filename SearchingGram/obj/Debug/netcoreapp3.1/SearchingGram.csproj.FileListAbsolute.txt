@@ -163,5 +163,10 @@ C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\M
 C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
 C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Google.Apis.dll
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Google.Apis.Auth.dll
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Google.Apis.Core.dll
+C:\Users\User\source\repos\SearchingGram\SearchingGram\bin\Debug\netcoreapp3.1\Google.Apis.YouTube.v3.dll
 C:\Users\User\source\repos\SearchingGram\SearchingGram\obj\Debug\netcoreapp3.1\SearchingGram.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\User\source\repos\SearchingGram\SearchingGram\obj\Debug\netcoreapp3.1\SearchingGram.MvcApplicationPartsAssemblyInfo.cache
