@@ -37,11 +37,16 @@ namespace SearchingGram.Models.Accounts
         public string _growsComments { get; set; }
 
         public string _growsFollowers{ get; set; }
-
+        //likes on last 12 posts
         public string _likesList { get; set; }
-
+        //comments on last 12 posts
         public string _commentsList { get; set; }
 
+
+        //Property to access data from _growsLikes field.
+        // return dictionary of date and number 
+        // to store data in Db I serialize Dictinary as Json and converting it to string 
+        // on get string get deserialized into Dictionary
         [NotMapped]
         public Dictionary<string ,int > GrowsLikes
         {
@@ -51,8 +56,11 @@ namespace SearchingGram.Models.Accounts
             {
                 _growsLikes = JsonConvert.SerializeObject(value, Formatting.Indented);
             }
-        }        
-
+        }
+        //Property to access data from _growsComments field.
+        // return dictionary of date and number 
+        // to store data in Db I serialize Dictinary as Json and converting it to string 
+        // on get string get deserialized into Dictionary
         [NotMapped]
         public Dictionary<string, int> GrowsComments
         {
@@ -66,7 +74,10 @@ namespace SearchingGram.Models.Accounts
                 _growsComments = JsonConvert.SerializeObject(value, Formatting.Indented);
             }
         }
-
+        //Property to access data from _growsFollowers field.
+        // return dictionary of date and number 
+        // to store data in Db I serialize Dictinary as Json and converting it to string 
+        // on get string get deserialized into Dictionary
         [NotMapped]
         public Dictionary<string, int> GrowsFollowers
         {
@@ -80,6 +91,10 @@ namespace SearchingGram.Models.Accounts
                 _growsFollowers = JsonConvert.SerializeObject(value, Formatting.Indented);
             }
         }
+        //Property to access data from __likesList field.
+        // return list of numbers 
+        // to store data in Db I convert Db to string
+        // on get string get deserialized into list
         [NotMapped]
         public List<int> LikesList {
             get {
@@ -90,7 +105,10 @@ namespace SearchingGram.Models.Accounts
                 return _likesList.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList(); }
             set { _likesList = string.Join(";", value); } 
         }
-
+        //Property to access data from _commentsList field.
+        // return list of numbers 
+        // to store data in Db I convert Db to string
+        // on get string get deserialized into list
         [NotMapped]
         public List<int> CommentsList {
             get {

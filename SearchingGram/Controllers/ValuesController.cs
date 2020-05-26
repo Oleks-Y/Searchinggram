@@ -15,18 +15,23 @@ using Tweetinvi.Core.Extensions;
 
 namespace SearchingGram.Controllers
 {
+    //++++++++++++++++++++++
+    //Controller for interaction with data from WatchersDB, where stored user data and data from soc. networks
+    //++++++++++++++++++++++
     [ApiController]
     [Route("[controller]")]
     public class ValuesController : Controller
     {
         public DataDbContext _Db;
+        //Watchers DB Context
         public WatcherDbContext _WDb;
         public readonly IInstaService _instaService;
         public readonly ITwitterService _twitterService;
         public readonly ITikTokService _tikTokService;
         public readonly IYou_TubeService _youtubeService;
+        //Service, that using to add information about already added account
         public readonly IInitializeInfoService _initializeInfoService;
-        private ITimerService _timer;
+        
         public ValuesController(DataDbContext db, WatcherDbContext wdb,IInstaService instaService, ITwitterService twitterService, ITikTokService tikTokService, ITimerService timer, IYou_TubeService youtubeService, IInitializeInfoService initializeInfoService)
         {
             _Db = db;
@@ -35,27 +40,17 @@ namespace SearchingGram.Controllers
             _twitterService = twitterService;
             _tikTokService = tikTokService;
             _youtubeService = youtubeService;
-            _timer = timer;
+            
             _initializeInfoService = initializeInfoService;
         }
-        
-        [HttpGet]
-        [Route("/[controller]/test")]
-        //тестовий метод 
-        public IActionResult Test() => Json(_timer.LastTimeRefresh());
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //     Every method have parameter token - it`s unique user identificator, that generate in TokenController
+        //     Every account called Watcher and have monitors. 
+        //     Monitor - list of accounts networks. 
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        [HttpGet]
-        [Route("/[controller]/getbyid")]
-        public IActionResult GetLogin(int id)
-        {
-            var user = _Db.Users.FirstOrDefault(x => x.Id == id);
-            if (user == null)
-            {
-                return NotFound("No user found");
-            }
-            return Ok(user.Token); 
-        }
-
+        //token-it`s unique user key, that generate in TokenController
+        // method to add new monitor to Monitors table
         [HttpPost]
         [Route("/[controller]/addmonitor")]
         public async Task<IActionResult> AddMonitor(string token,string monitorName)
@@ -64,6 +59,7 @@ namespace SearchingGram.Controllers
             if (User == null) return Json("None");
             
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
+            //if user exist, but Watcher don`t exist, like in first request, creating Watcher, adding to WatchersDB. 
             if (watcher == null)
             {
                 
@@ -81,6 +77,10 @@ namespace SearchingGram.Controllers
 
 
         }
+        //token-it`s unique user key, that generate in TokenController
+        //method to add new Account 
+        // monitorName - name of monitor, where user want add account 
+        //accountType - Name of social network, can be Instagram, Twitter, YouTube 
         [HttpPost]
         [Route("/[controller]/addaccount")]
         public async Task<IActionResult> AddAccount(string token, string monitorName, string accountName, string accountType)        
@@ -94,6 +94,7 @@ namespace SearchingGram.Controllers
             switch (accountType.ToLower())
             {
                 case "twitter":
+                    
                      if (!_twitterService.IsUserExist(accountName)) return NotFound("No account found");
                     await _WDb.TwitterAccounts.AddAsync(new TwitterAccount { Name = accountName, MonitorOwner = monitor });
                     await _initializeInfoService.InitInfoTwitter(accountName);
@@ -121,14 +122,21 @@ namespace SearchingGram.Controllers
             return Ok("Added");
 
         }
+        //token-it`s unique user key, that generate in TokenController
+        //method, that return all accounts names in selected monitor
+        //monitorName - name of monitor 
         [HttpGet]
         [Route("/[controller]/getaccslist")]
         public IActionResult GetStatistics(string token, string monitorName)
         {
+            //404 if user don`t exist
             var User = checkToken(token);
             if (User == null) return NotFound("No user with this token!Please create token! ");
+
+            
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
+            // 404 if user don`t have Monitors
             if (monitor == null) return NotFound("No such file!");
 
             var resposeDict = new Dictionary<string, List<string>>() { { "name", new List<string>(){ watcher.Name } },
@@ -136,18 +144,23 @@ namespace SearchingGram.Controllers
                                                                        { "YouTube", new List<string>()},
                                                                        { "Twitter", new List<string>()}};
 
-
+            //Find account names
             _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x=>resposeDict["Instagram"].Add(x.Name)); 
             _WDb.YouTubeAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["YouTube"].Add(x.Name));
             _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => resposeDict["Twitter"].Add(x.Name));
             return Json(resposeDict);
         }
+        //token-it`s unique user key, that generate in TokenController
+        //method, that return information about all accounts in selected monitor
+        //monitorName - name of monitor 
         [HttpGet]
         [Route("/Values/get_accs_Info")]
         public IActionResult GetAccsInfo(string token, string monitorName)
-        {
+        {   //404 if user don`t exist
             var User = checkToken(token);
             if (User == null) return NotFound("No user with this token!Please create token! ");
+            //Find Watcher
+            //404 if Monitor don`t exist in this Watcher  
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
             if (monitor == null) return NotFound("No such file!");
@@ -159,6 +172,7 @@ namespace SearchingGram.Controllers
                 YouTube = new List<IYouTubeResponse>(),
                 Twitter = new List<ITwitterResponse>()
             };
+            // Convert objects from db to IResponse interfaces to show only data, that needed to user
             _WDb.InstaAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Instagram.Add((IInstaResponse)x));
             _WDb.YouTubeAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.YouTube.Add((IYouTubeResponse)x));
             _WDb.TwitterAccounts.Where(y => y.MonitorOwnerId == monitor.Id).ForEach(x => response.Twitter.Add((ITwitterResponse)x));
@@ -167,17 +181,23 @@ namespace SearchingGram.Controllers
 
             return Json(response);
         }
+        //token-it`s unique user key, that generate in TokenController
+        //method return information about one single account
+        // monitorName - name of monitor, where user want add account 
+        //accountName - name of account that must be Added
+        //accountType - Name of social network, can be Instagram, Twitter, YouTube 
         [HttpGet]
         [Route("/Values/get_account_Info")]
         public IActionResult GetAccountInfo(string token, string monitorName, string accountName, string accountType)
         {
+            //404 if user don`t exist
             var User = checkToken(token);
             if (User == null) return NotFound("No user with this token!Please create token! ");
             var watcher = _WDb.Watchers.FirstOrDefault(x => x.Name == User.Login);
             var monitor = _WDb.Monitors.FirstOrDefault(x => x.WatcherId == watcher.Id && x.Name == monitorName);
             if (monitor == null) return NotFound("No such file!");
 
-
+            // Convert objects from db to IResponse interfaces to show only data, that needed to user
             switch (accountType)
             {
                 case "Twitter":
@@ -205,6 +225,8 @@ namespace SearchingGram.Controllers
 
             return NotFound("No account");
         }
+        //method return list of monitors from Watcher
+        //token-it`s unique user key, that generate in TokenController
         [HttpGet]
         [Route("/[controller]/get_monitors")]
         public async Task<IActionResult> GetStatistics(string token)
@@ -237,6 +259,11 @@ namespace SearchingGram.Controllers
            
             return Json(resposeDict);
         }
+        //token-it`s unique user key, that generate in TokenController
+        //method return information about one single account
+        // monitorName - name of monitor, where user want add account 
+        //accountName - name of account that must be Added
+        //accountType - Name of social network, can be Instagram, Twitter, YouTube
         [HttpDelete]
         [Route("/[controller]/delete_account")]
         public async Task<IActionResult> DeleteAccount(string token, string monitorName, string accountName, string accountType)
@@ -271,7 +298,7 @@ namespace SearchingGram.Controllers
 
         }
 
-
+        // method to find user by Token
         private User checkToken(string token)
         {
             foreach (var user in _Db.Users)

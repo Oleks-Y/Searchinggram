@@ -9,10 +9,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+//For interact with Authentification DataBase, if user use API first time, he must call CreateToken Method,
+//  if user already exist, he must call GetToken Method, where he get token 
+//  tokens are needed for identification client and acess user data.
 namespace SearchingGram.Controllers
 {
     public class TokenController : Controller
     {
+        // Authentification DB context
         private DataDbContext _db;
 
         public TokenController(DataDbContext context)
@@ -24,14 +28,17 @@ namespace SearchingGram.Controllers
         {
             return Ok("It works!");
         }
-
+        //++++++++++
+        //Create new User from username and password parameters, add new user to Authentification DataBase
+        //++++++++++
         [HttpPost]
         [Route("[controller]/create")]
-        public IActionResult CreateToken(string username, string password)
+        public async Task<IActionResult> CreateToken(string username, string password)
         {
 
             if (_db.Users.FirstOrDefault(x => x.Login == username) != null)
             {
+                //If user is exist we don`t create new 
                 var res = new
                 {
                     access_token = "",
@@ -44,6 +51,9 @@ namespace SearchingGram.Controllers
             }
             var identity = GetNewIdentity(username, password);
             var now = DateTime.UtcNow;
+
+            //Generation unique user token 
+
             var jwt = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
@@ -60,12 +70,15 @@ namespace SearchingGram.Controllers
                 is_exist = true
             };
             _db.Users.Add(new User() { Login = username, Password = password, Token = encodedJwt });
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return Json(response);
 
 
         }
+        //+++++++++++++
+        //Return user from password and username
+        //+++++++++++++
         [HttpGet]
         [Route("[controller]")]
         public IActionResult GetToken(string username, string password)
@@ -73,6 +86,7 @@ namespace SearchingGram.Controllers
             var user = _db.Users.FirstOrDefault(x => x.Login == username && x.Password == password);
             if (user == null)
             {
+                //If user don`t exist in DB
                 return Json(new
                 {
                     is_exist = false,
@@ -91,6 +105,8 @@ namespace SearchingGram.Controllers
                 password = user.Password
             });
         }
+
+        //For Generation Token
         private ClaimsIdentity GetNewIdentity(string username, string password)
         {
             var claims = new List<Claim>

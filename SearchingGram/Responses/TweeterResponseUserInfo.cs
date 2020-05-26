@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Responses
 {
+    //Response from Twitter API
     public class TweeterResponseUserInfo
     {
         public string Pic { get; set; }

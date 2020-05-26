@@ -44,15 +44,20 @@ namespace SearchingGram
                     Configuration.GetConnectionString("WatcherConnection")));
             
             services.AddSingleton<IWatcherService, WatchersService>();
+            //Services get info from APIs 
             services.AddScoped<ITwitterService, TweetService>();
             services.AddScoped<ITikTokService, TikTokService>();
             services.AddScoped<IInstaService, InstaService>();
-            services.AddScoped<ITimerService, TimerService>();
+            services.AddScoped<IYou_TubeService, You_TubeService>();
+            //Service, that run automatically, doing requests to APIs and 
+            // write new data to DataBase
             services.AddScoped<IRefreshInfoService, RefreshInfoService>();
             services.AddScoped<IInitializeInfoService, InitializeInfoService>();
-            services.AddScoped<IYou_TubeService, You_TubeService>();
+            //Quartz, services, for refreshing data
             services.AddTransient<JobFactory>();
             services.AddScoped<DataJob>();
+
+            //Using for generate token in TokenController
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
@@ -81,6 +86,7 @@ namespace SearchingGram
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            //Adding Swagger UI to API, opens in index.html
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Api", Version = "v1" });

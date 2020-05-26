@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Data
 {
+    //DB Context for Watchers DB
     public class WatcherDbContext : DbContext
     {
         public WatcherDbContext(DbContextOptions<WatcherDbContext> options)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Responses
 {
+    //Response from YouTube API 
     public class YouTubeResponseUserInfo
     {
         public string Name { get; set; }

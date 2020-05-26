@@ -11,6 +11,7 @@ namespace SearchingGram.Services
 {
     public class You_TubeService : IYou_TubeService
     {
+        //Service for YouTube API 
         public string URL { get; set ; }
 
         public  bool IsUserExist(string Name)

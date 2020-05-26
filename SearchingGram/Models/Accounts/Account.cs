@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SearchingGram.Models.Accounts
 {
+    //Basic class, that contain basic information about watched account
     public  class Account
     {
         [Key]

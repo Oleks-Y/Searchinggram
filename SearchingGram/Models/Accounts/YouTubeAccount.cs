@@ -16,27 +16,30 @@ namespace SearchingGram.Models.Accounts
         public string Subscribers { get; set; }
 
         public string Views { get; set; }
-        //Done
+        
         public string _viewsList { get; set; }
-        //Done
+        
         public string _likes { get; set; }
-        //Done
+        
         public string _dislikes { get; set; }
-        //Done
+        
         public long _mostLiked { get; set; }
-        //Done
+        
         public long _mostDisliked { get; set; }
 
         
-        //Done
+        
         public string _commentsCounts { get; set; }
 
         public string VideosCount { get; set; }
 
         public string _videoNames { get; set; }
-        //Done
+       
         public string _viewsGrows { get; set; }
-
+        //Property to access data from _viewsGrowsfield.
+        // return dictionary of date and number 
+        // to store data in Db I serialize Dictinary as Json and converting it to string 
+        // on get string get deserialized into Dictionary
         [NotMapped]
         public Dictionary<string, ulong?> GrowViews
         {
@@ -47,6 +50,10 @@ namespace SearchingGram.Models.Accounts
                 _viewsGrows = JsonConvert.SerializeObject(value, Formatting.Indented);
             }
         }
+        //Property to access data from _viewsList field.
+        // return list of numbers 
+        // to store data in Db I convert Db to string
+        // on get string get deserialized into list
         [NotMapped]
         public List<ulong> ViewsList
         {

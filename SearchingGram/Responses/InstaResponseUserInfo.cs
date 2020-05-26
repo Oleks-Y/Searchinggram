@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace SearchingGram
 {
+    //Response from Instagram API 
     public class InstaResponseUserInfo
     {
         public string Pic { get; set; }

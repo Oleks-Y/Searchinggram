@@ -7,6 +7,9 @@ using Tweetinvi.Core.Extensions;
 
 namespace SearchingGram.Services
 {
+    // Service, that write fresh information in DB and run by Quartz
+    //In DataScheduler IntervalInMinutes(int interval) define interval
+    // Current 60 - minutes 
     public class RefreshInfoService : IRefreshInfoService
     {
         public WatcherDbContext _WDb;
@@ -27,7 +30,7 @@ namespace SearchingGram.Services
 
         public async Task RefreshAccountsInfo()
         {
-            
+            //Call Api, get new Information and write to Tables
                 
              _WDb.InstaAccounts.ForEach(c =>
             {

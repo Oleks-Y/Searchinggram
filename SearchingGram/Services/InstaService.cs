@@ -9,7 +9,7 @@ namespace SearchingGram.Services
 {
     public class InstaService : IInstaService
     {
-        //URL IS NOT USING EVERYWHERE !!!!!!!!!!!!!!!
+        // Service to get info from Instagram API
 
         string INetService.URL { get=>  url; set { } }
 

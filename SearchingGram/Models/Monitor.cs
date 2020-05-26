@@ -9,6 +9,7 @@ namespace SearchingGram.Models
 {
     public class Monitor 
     {
+        // List of Accounts 
         [Key]
         public int Id { get; set; }
 
