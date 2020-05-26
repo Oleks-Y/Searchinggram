@@ -19,8 +19,8 @@ namespace SearchingGram.Services
 
             var service = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = "AIzaSyA1OI7D6StmNKDg4Fr4-j0ve27RFsbhxOs",
-                ApplicationName = "My Project 55986",
+                ApiKey = "",
+                ApplicationName = "",
 
             });
 
