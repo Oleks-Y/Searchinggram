@@ -17,7 +17,7 @@ namespace SearchingGram.Services
         public TwitterService _service;
         public TweetService()
         {
-            _service=new TwitterService("SyFjRNtGIXiHLS3k9hUWdFZbv", "XmeczmCV07Kde8n41BbIytzc3eIbSDdFGfRNf0mXou716dsHJN", "1153209111942762502-iqMo6JAksO2LjD3cYSFxDSMVsy9bnI", "rp8RZcvlTW4etlWDW1ALig3pLY7TBtGAlXTaqn8BFBKJE");
+            _service=new TwitterService("", "", "", "");
         }
         //Service for Twitter API 
         public TweeterResponseUserInfo GetInfo(string name)
